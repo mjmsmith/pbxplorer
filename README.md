@@ -149,7 +149,7 @@ Enter the target statement:
 }
 ```
 
-etc
+You can continue exploring the object graph in this manner, down to `PBXFileReference`objects, which contain no references to other objects.
 
 ### Example: removing a source file
 
