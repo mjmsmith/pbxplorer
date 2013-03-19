@@ -179,3 +179,8 @@ build_phases.each { |phase| phase["files"] << build_file.uuid }
 
 project_file.save
 ```
+
+## LICENSE
+
+MIT license.
+

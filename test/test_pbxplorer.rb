@@ -5,7 +5,7 @@ require "pbxplorer"
 
 class XCProjectFileTest < Test::Unit::TestCase
 	def setup
-		@pf = XCProjectFile.new "."
+		@pf = XCProjectFile.new "test"
 	end
 
 	def test_read
@@ -78,7 +78,7 @@ class XCProjectFileTest < Test::Unit::TestCase
 			obj = @pf.add_object PBXFileReference.new
 			@pf.save path
 
-			old_pf = XCProjectFile.new "."
+			old_pf = XCProjectFile.new "test"
 			new_pf = XCProjectFile.new path
 			
 			assert_not_nil new_pf
@@ -96,7 +96,7 @@ class XCProjectFileTest < Test::Unit::TestCase
 			@pf.remove_file_ref fr
 			@pf.save path
 		  
-		  old_pf = XCProjectFile.new "."
+		  old_pf = XCProjectFile.new "test"
 		  new_pf = XCProjectFile.new path
 		  
 		  assert_not_nil new_pf
@@ -110,7 +110,7 @@ end
 
 class PBXProjectTest < Test::Unit::TestCase
 	def setup
-		@project = XCProjectFile.new(".").project
+		@project = XCProjectFile.new("test").project
 	end
 
 	def test_properties
@@ -122,7 +122,7 @@ end
 
 class XCConfigurationListTest < Test::Unit::TestCase
 	def setup
-		@list = XCProjectFile.new(".").project.build_configuration_list
+		@list = XCProjectFile.new("test").project.build_configuration_list
 	end
 	
 	def test_properties
