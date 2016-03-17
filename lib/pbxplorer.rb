@@ -110,12 +110,19 @@ class PBXGroup < PBXObject
   def subgroups recursive=false
     PBXGroup.objects_of_class self.children(recursive)
   end
+  
+  def variant_groups recursive=false
+    PBXVariantGroup.objects_of_class self.children(recursive)
+  end
 
   def help
     puts "file_ref = group.file_refs.first\n=> " + PBXFileReference.to_s
     puts "group = group.subgroups.first"
     PBXGroup
   end
+end
+
+class PBXVariantGroup < PBXGroup
 end
 
 class PBXNativeTarget < PBXObject

@@ -26,6 +26,7 @@ PBXObject
         PBXSourcesBuildPhase
     PBXFileReference
     PBXGroup
+        PBXVariantGroup
     PBXProject
     PBXNativeTarget
     XCBuildConfiguration
@@ -50,6 +51,7 @@ PBXGroup
     children: [PBXGroup|PBXFileReference]
     subgroups: [PBXGroup]
     file_refs: [PBXFileReference]
+    variant_groups: [PBXVariantGroup]
 
 PBXNativeTarget
     build_configuration_list: XCBuildConfigurationList
