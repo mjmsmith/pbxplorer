@@ -1,19 +1,19 @@
 require 'json'
 
 class String
-  alias to_plist to_json
+  alias to_pbx_plist to_json
 end
 
 class Array
-  def to_plist
-    items = self.map { |item| "#{item.to_plist}" }
+  def to_pbx_plist
+    items = self.map { |item| "#{item.to_pbx_plist}" }
     "( #{items.join ","} )"
   end
 end
 
 class Hash
-  def to_plist
-    items = self.map { |key, val| "#{key.to_plist} = #{val.to_plist};\n" }
+  def to_pbx_plist
+    items = self.map { |key, val| "#{key.to_pbx_plist} = #{val.to_pbx_plist};\n" }
     "{ #{items.join} }"
   end
 end
@@ -21,7 +21,7 @@ end
 class PBXObject < Hash
   attr_accessor :project_file
   attr_reader :uuid
-  
+
   def self.filter objs, attrs
     objs.select do |obj|
       attrs.select { |key, val| obj[key] == val }.length == attrs.length
@@ -33,13 +33,13 @@ class PBXObject < Hash
    objs = self.filter(objs, attrs) if attrs
    objs
   end
-  
+
   def initialize hash={}, uuid=""
     24.times { uuid += "0123456789ABCDEF"[rand(16),1] } if uuid.empty?
-    
+
     @project = nil
     @uuid = uuid
-    
+
     self.merge! hash
     self["isa"] ||= self.class.to_s
   end
@@ -102,15 +102,15 @@ class PBXGroup < PBXObject
 
     children.flatten
   end
-    
+
   def file_refs recursive=false
     PBXFileReference.objects_of_class self.children(recursive)
   end
-  
+
   def subgroups recursive=false
     PBXGroup.objects_of_class self.children(recursive)
   end
-  
+
   def variant_groups recursive=false
     PBXVariantGroup.objects_of_class self.children(recursive)
   end
@@ -162,7 +162,7 @@ class PBXProject < PBXObject
   def targets
     self.project_file.objects_with_uuids self["targets"]
   end
-  
+
   def build_configuration_list
     self.project_file.object_with_uuid self["buildConfigurationList"]
   end
@@ -190,7 +190,7 @@ class XCProjectFile
     @path += "/project.pbxproj" if File.directory? @path
 
     @json = JSON.parse(`plutil -convert json -o - "#{@path}"`)
-    
+
     objs = @json["objects"]
     @json["objects"] = {}
 
@@ -200,16 +200,16 @@ class XCProjectFile
         klass = Object.const_get hash["isa"]
       rescue
       end
-      
+
       self.add_object klass.new(hash, uuid)
     end
   end
 
   def save path=nil
     path ||= @path
-    File.open(path, "w") { |f| f.write @json.to_plist }
+    File.open(path, "w") { |f| f.write @json.to_pbx_plist }
   end
-  
+
   def project
     self.object_with_uuid @json["rootObject"]
   end
@@ -231,31 +231,31 @@ class XCProjectFile
     objs = PBXObject.filter(objs, attrs) if attrs
     objs
   end
-  
+
   def object_with_uuid uuid
     @json["objects"][uuid]
   end
-  
+
   def new_object klass, attrs={}
     obj = klass.new attrs
     self.add_object obj
     obj
   end
-  
+
   def add_object obj
     obj.project_file = self
     @json["objects"][obj.uuid] = obj
   end
-  
+
   def remove_object obj
     obj.project_file = nil
     @json["objects"].delete obj.uuid
   end
-  
+
   def remove_file_ref file_ref
     build_files = self.objects_of_class PBXBuildFile, { "fileRef" => file_ref.uuid }
     build_file_uuids = build_files.map { |obj| obj.uuid }
-    
+
     build_files.each { |build_file| self.remove_object build_file }
     self.objects_of_class(PBXBuildPhase).each { |phase| phase["files"] -= build_file_uuids }
     self.objects_of_class(PBXGroup).each { |group| group["children"].delete file_ref }
@@ -266,7 +266,7 @@ class XCProjectFile
     puts "project = project_file.project"
     PBXProject
   end
-  
+
   def inspect
     "{\n  rootObject = #{@json['rootObject'].inspect}\n  objects = < #{@json['objects'].length} objects >\n}"
   end
