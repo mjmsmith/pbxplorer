@@ -4,6 +4,10 @@ class String
   alias to_pbx_plist to_json
 end
 
+class Fixnum
+  alias to_pbx_plist to_json
+end
+
 class Array
   def to_pbx_plist
     items = self.map { |item| "#{item.to_pbx_plist}" }
