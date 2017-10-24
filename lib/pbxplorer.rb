@@ -211,7 +211,7 @@ class XCProjectFile
 
   def save path=nil
     path ||= @path
-    File.open(path, "w") { |f| f.write @json.to_pbx_plist }
+    File.open(path, "w") { |f| f.write @json.to_pbx_plist.gsub( /\"CURRENT_PROJECT_VERSION\" = \"(\d+)\"/, "CURRENT_PROJECT_VERSION = \\1") }
   end
 
   def project
