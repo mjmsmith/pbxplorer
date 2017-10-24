@@ -4,7 +4,9 @@ class String
   alias to_pbx_plist to_json
 end
 
-class Fixnum
+# Fixnum is deprecated in Ruby 2.4.0 and above, and it is recommended to use Integer class instead.
+klass_name = (Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.4.0') ? 'Fixnum' : 'Integer')
+Module.const_get(klass_name).class_eval do
   alias to_pbx_plist to_json
 end
 
